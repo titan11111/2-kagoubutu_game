@@ -18,6 +18,7 @@ let isAudioStarted = false;
 let currentQuiz = [];
 let currentIndex = 0;
 let score = 0;
+let inExtraQuiz = false;
 
 startBtn.addEventListener("click", () => {
     titleScreen.style.display = "none";
@@ -34,8 +35,13 @@ function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-function startQuiz() {
-    currentQuiz = shuffleArray([...quizData]).slice(0, 10);
+function startQuiz(extra = false) {
+    inExtraQuiz = extra;
+    if (extra) {
+        currentQuiz = shuffleArray([...extraQuizData]).slice(0, 5);
+    } else {
+        currentQuiz = shuffleArray([...quizData]).slice(0, 10);
+    }
     currentIndex = 0;
     score = 0;
     resultEl.style.display = "none";
@@ -104,20 +110,32 @@ nextBtn.addEventListener("click", () => {
     }
 });
 
-function getTitle(score) {
-    if (score === 10) {
-        return { title: "ニュートン", message: "完璧だ！！素晴らしい！！未来の大科学者だ！！" };
-    } else if (score >= 7) {
-        return { title: "ガリレオ", message: "すごいぞ！！君の探究心は本物だ！！最高だ！！" };
-    } else if (score >= 4) {
-        return { title: "パスカル", message: "いいぞ！！あと少しでトップだ！！がんばれ！！" };
+function getTitle(score, extra = false) {
+    if (extra) {
+        if (score === 5) {
+            return { title: "メンデレーエフ", message: "完璧だ！！元素の周期表を作った天才だ！！未来の科学界のスターだ！！" };
+        } else if (score >= 4) {
+            return { title: "ラボアジエ", message: "質量保存の法則を発見した偉人！すばらしい研究心だ！！" };
+        } else if (score >= 3) {
+            return { title: "ボイル", message: "気体の法則を解き明かした探究者！よく頑張った！！もう少しでトップだ！！" };
+        } else {
+            return { title: "科学者の卵", message: "成長中の若き科学者！挑戦は続く！！次はもっと高みを目指そう！！" };
+        }
     } else {
-        return { title: "化学者見習い", message: "大丈夫！！未来はこれから！！どんどん挑戦しよう！！" };
+        if (score === 10) {
+            return { title: "ニュートン", message: "完璧だ！！素晴らしい！！未来の大科学者だ！！" };
+        } else if (score >= 7) {
+            return { title: "ガリレオ", message: "すごいぞ！！君の探究心は本物だ！！最高だ！！" };
+        } else if (score >= 4) {
+            return { title: "パスカル", message: "いいぞ！！あと少しでトップだ！！がんばれ！！" };
+        } else {
+            return { title: "化学者見習い", message: "大丈夫！！未来はこれから！！どんどん挑戦しよう！！" };
+        }
     }
 }
 
 function showResult() {
-    const result = getTitle(score);
+    const result = getTitle(score, inExtraQuiz);
     questionEl.textContent = "";
     choicesEl.innerHTML = "";
     feedbackEl.textContent = "";
@@ -125,14 +143,21 @@ function showResult() {
     resultEl.innerHTML = `あなたの正解数は ${score} / ${currentQuiz.length} です！<br>きみは <strong>${result.title}</strong> だ！！<br>${result.message}`;
 
     const shareUrl = encodeURIComponent('https://yourname.github.io/quiz');
-    const shareText = encodeURIComponent(`化合物クイズで${score}/${currentQuiz.length}正解！きみは${result.title}だ！！挑戦してみよう！`);
+    const shareText = encodeURIComponent(`化合物クイズ${inExtraQuiz ? 'エクストラ' : ''}で${score}/${currentQuiz.length}正解！きみは${result.title}だ！！挑戦してみよう！`);
     lineShareBtn.href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
     lineShareBtn.style.display = "inline-block";
 
+    if (!inExtraQuiz && score === 10) {
+        restartBtn.textContent = "エクストラクイズに進む";
+        restartBtn.onclick = () => startQuiz(true);
+    } else {
+        restartBtn.textContent = "もう一回遊ぶ";
+        restartBtn.onclick = () => startQuiz();
+    }
     restartBtn.style.display = "inline-block";
 }
 
-restartBtn.addEventListener("click", startQuiz);
+
 const quizData = [
     { question: "H₂O はどれ？", choices: ["水", "二酸化炭素", "アンモニア", "塩化ナトリウム"], answer: "水", episode: "水は地球上の生命に不可欠で、化学式はH₂Oです。" },
     { question: "NaCl はどれ？", choices: ["酸素", "塩化ナトリウム", "黄鉄鉱", "石英"], answer: "塩化ナトリウム", episode: "塩化ナトリウムは食塩の主成分で、私たちの食生活に欠かせません。" },
@@ -184,4 +209,26 @@ const quizData = [
 { question: "TiO₂ はどれ？", choices: ["酸化チタン", "酸化鉄", "酸化銅", "酸化マグネシウム"], answer: "酸化チタン", episode: "酸化チタンは白色顔料や日焼け止めに使われます。" },
 { question: "Cr₂O₃ はどれ？", choices: ["酸化クロム", "酸化鉄", "酸化銅", "酸化マグネシウム"], answer: "酸化クロム", episode: "酸化クロムは緑色顔料として塗料に使われます。" },
 { question: "MnO₂ はどれ？", choices: ["酸化マンガン", "酸化鉄", "酸化銅", "酸化亜鉛"], answer: "酸化マンガン", episode: "酸化マンガンは乾電池の材料として使われます。" }
+];
+
+const extraQuizData = [
+    { question: "ダイヤモンドの結晶構造は？", choices: ["共有結合結晶", "金属結晶", "イオン結晶", "分子結晶"], answer: "共有結合結晶", episode: "ダイヤモンドは炭素原子が強固に共有結合した結晶です。" },
+    { question: "黄鉄鉱の主成分は？", choices: ["FeS₂", "Fe₂O₃", "Fe₃O₄", "FeO"], answer: "FeS₂", episode: "黄鉄鉱は“愚者の金”と呼ばれ、FeS₂で構成されています。" },
+    { question: "石英の主成分は？", choices: ["SiO₂", "Al₂O₃", "CaCO₃", "MgCO₃"], answer: "SiO₂", episode: "石英は二酸化ケイ素でできた鉱物です。" },
+    { question: "ルビーとサファイアの主成分は？", choices: ["Al₂O₃", "SiO₂", "Fe₂O₃", "MgCO₃"], answer: "Al₂O₃", episode: "コランダムの仲間で、不純物によって色が変わります。" },
+    { question: "カルサイトの主成分は？", choices: ["CaCO₃", "CaSO₄", "CaCl₂", "CaF₂"], answer: "CaCO₃", episode: "カルサイトは炭酸カルシウムの結晶で、石灰岩を構成します。" },
+    { question: "黄銅鉱の主成分は？", choices: ["CuFeS₂", "Cu₂S", "CuS", "FeS₂"], answer: "CuFeS₂", episode: "黄銅鉱は銅の主要な鉱石です。" },
+    { question: "方鉛鉱の主成分は？", choices: ["PbS", "ZnS", "FeS₂", "CuS"], answer: "PbS", episode: "方鉛鉱は鉛の主要な鉱石で、銀も伴います。" },
+    { question: "輝銀鉱の主成分は？", choices: ["Ag₂S", "AgCl", "AgBr", "AgI"], answer: "Ag₂S", episode: "輝銀鉱は銀を含む代表的な鉱物です。" },
+    { question: "オパールの化学式は？", choices: ["SiO₂・nH₂O", "Al₂O₃", "CaCO₃", "Fe₂O₃"], answer: "SiO₂・nH₂O", episode: "オパールは二酸化ケイ素に水が含まれた鉱物で、美しい遊色効果があります。" },
+    { question: "ビスマスの化学式は？", choices: ["Bi", "Ba", "Be", "B"], answer: "Bi", episode: "ビスマスは虹色の酸化皮膜が特徴で、金属元素の一つです。" },
+    { question: "エメラルドの主成分は？", choices: ["ベリル", "コランダム", "石英", "方解石"], answer: "ベリル", episode: "エメラルドはベリル（Be₃Al₂Si₆O₁₈）にクロムが混じったものです。" },
+    { question: "ガーネットは何の鉱物グループ？", choices: ["珪酸塩鉱物", "硫化鉱物", "酸化鉱物", "炭酸塩鉱物"], answer: "珪酸塩鉱物", episode: "ガーネットは複雑な珪酸塩鉱物グループに属します。" },
+    { question: "スピネルの主成分は？", choices: ["MgAl₂O₄", "Al₂O₃", "Fe₃O₄", "SiO₂"], answer: "MgAl₂O₄", episode: "スピネルはマグネシウムとアルミニウムの酸化物です。" },
+    { question: "ペリドットの主成分は？", choices: ["オリビン", "スピネル", "石英", "長石"], answer: "オリビン", episode: "ペリドットはオリビンの宝石質のものです。" },
+    { question: "トパーズの主成分は？", choices: ["Al₂SiO₄(F,OH)₂", "SiO₂", "Al₂O₃", "MgCO₃"], answer: "Al₂SiO₄(F,OH)₂", episode: "トパーズは含フッ素アルミノ珪酸塩鉱物です。" },
+    { question: "蛍石の化学式は？", choices: ["CaF₂", "CaCO₃", "CaSO₄", "CaCl₂"], answer: "CaF₂", episode: "蛍石は蛍光を示すことからこの名がつきます。" },
+    { question: "長石の主成分は？", choices: ["アルカリアルミノ珪酸塩", "炭酸カルシウム", "酸化鉄", "硫化鉛"], answer: "アルカリアルミノ珪酸塩", episode: "長石は地殻中で最も多い珪酸塩鉱物です。" },
+    { question: "マグネサイトの化学式は？", choices: ["MgCO₃", "CaCO₃", "FeCO₃", "MnCO₃"], answer: "MgCO₃", episode: "マグネサイトはマグネシウム鉱石として利用されます。" },
+    { question: "赤鉄鉱の化学式は？", choices: ["Fe₂O₃", "Fe₃O₄", "FeO", "FeS₂"], answer: "Fe₂O₃", episode: "赤鉄鉱は鉄の重要な鉱石です。" }
 ];
