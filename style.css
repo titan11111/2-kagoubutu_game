@@ -1,0 +1,117 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('images/gemstones.jpg') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.6); /* 透過を少し減らした */
+    backdrop-filter: blur(4px); /* ぼかしを弱めた */
+    z-index: -1;
+}
+
+#title-screen, #quiz-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 4px solid #7f8c8d;
+    border-radius: 15px;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    margin: 40px auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    text-align: center;
+    min-height: 550px;
+}
+
+h1 {
+    color: #2c3e50;
+    text-shadow: 2px 2px #bdc3c7;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    color: #34495e;
+    margin-bottom: 20px;
+}
+
+#question {
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    min-height: 60px;
+}
+
+.choices-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.choice {
+    background-color: #ecf0f1;
+    border: 2px solid #7f8c8d;
+    width: 45%;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    font-size: 1.5em;
+    box-sizing: border-box;
+}
+
+.choice:hover {
+    background-color: #d0d3d4;
+    transform: scale(1.05);
+}
+
+#feedback {
+    margin: 20px 0;
+    font-weight: bold;
+    height: 80px;
+    border-top: 2px dashed #7f8c8d;
+    padding-top: 10px;
+    color: #34495e;
+}
+
+#next-btn, #restart-btn, #start-btn, #line-share {
+    margin-top: 10px;
+    padding: 12px 25px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#start-btn {
+    background-color: #8e44ad;
+    color: white;
+}
+
+#next-btn {
+    background-color: #27ae60;
+    color: white;
+}
+
+#restart-btn {
+    background-color: #2980b9;
+    color: white;
+}
+
+#line-share {
+    background-color: #00c300;
+    color: white;
+    text-decoration: none;
+}
